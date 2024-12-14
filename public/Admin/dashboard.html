@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        h2 {
+            text-align: center;
+            color: #555;
+        }
+        .dashboard-btn {
+            display: block;
+            width: 250px;
+            margin: 20px auto;
+            padding: 10px;
+            text-align: center;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .dashboard-btn:hover {
+            background-color: #0056b3;
+        }
+        .dashboard-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="dashboard-container">
+        <h1>Admin Dashboard</h1>
+        <h2>Manage User Information and Requests</h2>
+
+        <button class="dashboard-btn" onclick="goToUserInfo()">View All Users</button>
+        <button class="dashboard-btn" onclick="investigateEvidence()">Investigate Evidence</button>
+        <button class="dashboard-btn" onclick="uploadLostAndFoundRequest()">Upload Lost and Found Request</button>
+        <button class="dashboard-btn" onclick="viewLostNdFound()">View Founded Items </button>
+    </div>
+
+    <script>
+        // Redirect to user_info.html when the button is clicked
+        function goToUserInfo() {
+            window.location.href = '/admin/user_info';
+        }
+
+        // Redirect to evidence.html when the "Investigate Evidence" button is clicked
+        function investigateEvidence() {
+            window.location.href = '/evidence.html';
+        }
+
+        // Redirect to lf_admin.html when the "Upload Lost and Found Request" button is clicked
+        function uploadLostAndFoundRequest() {
+            window.location.href = '/admin/L&F/lf_admin.html';
+        }
+        function viewLostNdFound() {
+            window.location.href = '/admin/L&F/lf_view.html';
+        }
+    </script>
+    
+</body>
+</html>
+

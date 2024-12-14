@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login/Register</title>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif; /* Using Roboto font for better readability */
+            margin: 0;
+            padding: 0;
+            background-color: #eafcff; /* Light blue background */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh; /* Full viewport height */
+        }
+
+        header {
+            position: fixed; /* Fixes the navbar at the top */
+            top: 0;
+            width: 100%;
+            background-color: white;
+            padding-left: 20px;
+            color: #1e3d58; /* Medium dark blue color */
+            margin: 10px 10px; /* Adjust padding */
+            display: flex;
+            justify-content: flex-start;
+            align-items: center; /* Vertically centers content */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+            font-weight: 400; /* Normal font weight */
+            z-index: 1000; /* Ensures it stays on top of other elements */
+        }
+
+        main {
+            margin-top: 80px; /* Adds space below fixed navbar */
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .big-div {
+            display: flex;
+            justify-content: space-between;
+            width: 90%;
+            height: auto;
+            max-width: 1200px;
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+
+        .left-div {
+            background-color: #d4f8e8; /* Light green */
+            border-radius: 12px;
+            padding: 20px;
+            width: 40%; /* 40% of the big div width */
+            height: auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .left-div h2 {
+            color: #1e3d58;
+            margin-bottom: 20px;
+        }
+
+        .left-div img {
+            width: 80%; /* Adjust image width */
+            height: auto;
+            margin: 20px 0;
+        }
+
+        .form-container {
+            width: 55%; /* 55% of the big div width */
+            padding: 20px;
+            background-color: white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+        }
+
+        h2 {
+            color: #1e3d58;
+            margin-bottom: 15px;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="password"],
+        textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            background-color: #1e3d58;
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+        }
+
+        button:hover {
+            background-color: #15658c; /* Slightly darker on hover */
+        }
+
+        .radio-buttons {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .radio-buttons label {
+            margin-right: 20px;
+            cursor: pointer;
+        }
+
+        .form-container a {
+            text-decoration: none;
+            color: #1e3d58;
+            font-size: 14px;
+            display: block;
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .form-container a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h2>TrackMate</h2>
+    </header>
+
+    <main>
+        <!-- Big Div -->
+        <div class="big-div">
+            <!-- Left Div -->
+            <div class="left-div">
+                <h2>Welcome Admin!</h2>
+                <img src="/public/User/Wel.png" alt="Admin Image">
+                <p>Securely manage your admin tasks here.</p>
+            </div>
+
+            <!-- Form Container -->
+            <div id="adminForms" class="form-container">
+                <!-- Radio buttons to toggle between login and registration -->
+                <div class="radio-buttons">
+                    <label>
+                        <input type="radio" name="formSwitch" value="login" checked> Login
+                    </label>
+                    <label>
+                        <input type="radio" name="formSwitch" value="register"> Register
+                    </label>
+                </div>
+
+                <!-- Admin Login Form -->
+                <div id="loginForm">
+                    <h2>Admin Login</h2>
+                    <form id="adminLoginForm">
+                        <label for="username">Username:</label>
+                        <input type="text" id="username" name="username" required>
+                        
+                        <label for="password">Password:</label>
+                        <input type="password" id="password" name="password" required>
+                        
+                        <button type="submit">Login</button>
+                    </form>
+                </div>
+
+                <!-- Admin Registration Form -->
+                <div id="registerForm" style="display: none;">
+                    <h2>Admin Registration</h2>
+                    <form id="adminRegisterForm">
+                        <label for="policeStation">Police Station Name:</label>
+                        <input type="text" id="policeStation" name="policeStation" required>
+
+                        <label for="stationEmail">Station Email:</label>
+                        <input type="email" id="stationEmail" name="stationEmail" required>
+
+                        <label for="address">Address:</label>
+                        <input type="text" id="address" name="address" required>
+
+                        <label for="pincode">Pincode:</label>
+                        <input type="text" id="pincode" name="pincode" required>
+
+                        <label for="password">Password:</label>
+                        <input type="password" id="password" name="password" required>
+
+                        <button type="submit">Register</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Admin Login Form Submission
+        document.getElementById('adminLoginForm').addEventListener('submit', async function (event) {
+            event.preventDefault();
+
+            const formData = new FormData(this);
+            const loginData = {
+                username: formData.get('username'),
+                password: formData.get('password')
+            };
+
+            try {
+                const response = await fetch('/admin/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(loginData)
+                });
+
+                const result = await response.json();
+                if (response.ok) {
+                    window.location.href = '/admin/dashboard';  // Redirect to dashboard
+                } else {
+                    alert(`Login failed: ${result.message}`);
+                }
+            } catch (error) {
+                console.error("Login error:", error);
+                alert('An error occurred during login.');
+            }
+        });
+
+        // Admin Registration Form Submission
+        document.getElementById('adminRegisterForm').addEventListener('submit', async function (event) {
+            event.preventDefault();
+
+            const formData = new FormData(this);
+            const registerData = {
+                police_station_name: formData.get('policeStation'),
+                station_email: formData.get('stationEmail'),
+                address: formData.get('address'),
+                pincode: formData.get('pincode'),
+                password: formData.get('password')
+            };
+
+            try {
+                const response = await fetch('/admin/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(registerData)
+                });
+
+                const result = await response.json();
+                if (response.ok) {
+                    window.location.href = '/admin/dashboard';  // Redirect to dashboard
+                } else {
+                    alert(`Registration failed: ${result.message}`);
+                }
+            } catch (error) {
+                console.error("Registration error:", error);
+                alert('An error occurred during registration.');
+            }
+        });
+
+        // Toggle form visibility
+        document.querySelectorAll('input[name="formSwitch"]').forEach(input => {
+            input.addEventListener('change', function () {
+                if (this.value === 'register') {
+                    document.getElementById('loginForm').style.display = 'none';
+                    document.getElementById('registerForm').style.display = 'block';
+                } else {
+                    document.getElementById('registerForm').style.display = 'none';
+                    document.getElementById('loginForm').style.display = 'block';
+                }
+            });
+        });
+    </script>
+</body>
+</html>

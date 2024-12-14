@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Information</title>
+    <link rel="stylesheet" href="styles.css"> <!-- Link to your CSS file -->
+    <style>
+        /* Basic styles for the modal */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 1; /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 10% auto; /* Centered vertically */
+            padding: 20px;
+            border: 1px solid #888;
+            width: 90%; /* Could be more or less, depending on screen size */
+            max-width: 500px; /* Maximum width */
+            border-radius: 10px; /* Rounded corners */
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }/* Styles for the user info table */
+#userInfoTable {
+    width: 100%; /* Adjust table width */
+     /* Center the table horizontally */
+    border-collapse: collapse; /* Remove gaps between cells */
+    border-radius: 8px; /* Rounded corners for the table */
+    overflow: hidden; /* Ensure rounded corners for all rows */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow effect */
+}
+
+/* Table headers */
+#userInfoTable th {
+    background-color: #4a4a4a; /* Dark gray for header background */
+    color: #fff; /* White text for header */
+    font-size: 1rem;
+    text-transform: uppercase; /* Make headers uppercase */
+    padding: 12px 15px;
+    text-align: center;
+}
+
+/* Table rows */
+#userInfoTable td {
+    background-color: #f9f9f9; /* Light gray for cells */
+    color: #333; /* Dark gray text */
+    padding: 10px 15px;
+    font-size: 0.9rem;
+    
+    text-align: center;
+}
+
+/* Alternate row colors */
+#userInfoTable tr:nth-child(even) {
+    background-color: #f4f4f4; /* Slightly darker gray for alternate rows */
+}
+
+/* Hover effect for rows */
+#userInfoTable tr:hover {
+    background-color: #e2e2e2; /* Highlight row on hover */
+    transition: background-color 0.2s ease-in-out; /* Smooth transition */
+}
+
+        /* Styles for form in the modal */
+        #editUserForm {
+            display: flex;
+            flex-direction: column; /* Stack fields vertically */
+        }
+        #editUserForm label {
+            margin-bottom: 5px; /* Space between label and input */
+        }
+        #editUserForm input {
+            margin-bottom: 15px; /* Space between inputs */
+            padding: 8px; /* Padding for inputs */
+            border: 1px solid #ccc; /* Border for inputs */
+            border-radius: 4px; /* Rounded corners for inputs */
+        }
+
+        /* Link back to home */
+        .back-link {
+            display: block;
+            margin: 20px 0;
+            text-decoration: none;
+            color: #007bff; /* Link color */
+        }
+        .back-link:hover {
+            text-decoration: underline; /* Underline on hover */
+        }
+
+        /* Styles for verified email */
+        .verified {
+            color: green; /* Color for verified email */
+            font-weight: bold; /* Bold font */
+        }
+        
+        
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>User Information </h1>
+        <table id="userInfoTable">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Email <button id="sendOtpBtn">Verify</button></th>
+                    <th>Phone Number</th>
+                    <th>Address</th>
+                    <th class="edit">Edit</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td colspan="5">Loading...</td>
+                </tr>
+            </tbody>
+        </table>
+        <a href="User/home.html" class="back-link">Back to Home</a>
+        
+        <!-- Edit User Modal -->
+        <div id="editUserModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2>Edit User Details</h2>
+                <form id="editUserForm">
+                    <input type="hidden" id="userId" name="userId">
+                    <label for="editName">Name:</label>
+                    <input type="text" id="editName" name="name" required>
+                    <label for="editEmail">Email:</label>
+                    <input type="email" id="editEmail" name="email" class="email-input" required>
+                    <label for="editPhone">Phone Number:</label>
+                    <input type="text" id="editPhone" name="phone_no" required>
+                    <label for="editAddress">Address:</label>
+                    <input type="text" id="editAddress" name="address" required>
+                    <button type="submit">Update</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                // Fetch user details using the logged-in user's ID from the session
+                const response = await fetch('/user/details', {
+                    method: 'GET',
+                    credentials: 'same-origin' // Ensures cookies (session ID) are sent with the request
+                });
+                
+                if (!response.ok) throw new Error('Network response was not ok');
+                
+                const userDetails = await response.json();
+                const tbody = document.querySelector('#userInfoTable tbody');
+                tbody.innerHTML = ''; // Clear loading message
+
+                if (userDetails.success) {
+                    const user = userDetails.user;
+                    const emailClass = user.verifiedEmail ? 'verified' : ''; // Add verified class if email is verified
+                    tbody.innerHTML = `
+                        <tr>
+                            <td>${user.name}</td>
+                            <td class="${emailClass}">${user.email}</td>
+                            <td>${user.phone_no}</td>
+                            <td>${user.address}</td>
+                            <td><button class="editBtn" data-id="${user.id}">Edit</button></td>
+                        </tr>
+                    `;
+
+                    // Edit button functionality
+                    const editBtn = document.querySelector('.editBtn');
+                    if (editBtn) {
+                        editBtn.addEventListener('click', (e) => {
+                            const userId = e.target.getAttribute('data-id');
+                            openEditModal(userId, user); // Pass the user details to populate the modal
+                        });
+                    }
+                } else {
+                    tbody.innerHTML = '<tr><td colspan="5">No user details found.</td></tr>';
+                }
+            } catch (error) {
+                console.error('Error fetching user details:', error);
+                const tbody = document.querySelector('#userInfoTable tbody');
+                tbody.innerHTML = '<tr><td colspan="5">Error loading user details.</td></tr>';
+            }
+        });
+
+        function openEditModal(userId, user) {
+            document.getElementById('userId').value = userId;
+            document.getElementById('editName').value = user.name;
+            document.getElementById('editEmail').value = user.email;
+            document.getElementById('editPhone').value = user.phone_no;
+            document.getElementById('editAddress').value = user.address;
+            document.getElementById('editUserModal').style.display = 'block';
+        }
+
+        // OTP send button functionality
+        document.getElementById('sendOtpBtn').addEventListener('click', async () => {
+            try {
+                const response = await fetch('/send-otp', { method: 'POST' });
+                const result = await response.json();
+                alert(result.message);
+                if (result.success) {
+                    // Ask for OTP via alert
+                    const otp = prompt("Enter OTP:");
+                    if (otp) {
+                        await verifyOtp(otp);
+                    }
+                }
+            } catch (error) {
+                console.error('Error sending OTP:', error);
+                alert('An error occurred while sending OTP.');
+            }
+        });
+
+        // Verify OTP functionality
+        async function verifyOtp(otp) {
+            try {
+                const response = await fetch('/verify-otp', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ otp })
+                });
+                const result = await response.json();
+                alert(result.message);
+                if (result.success) {
+                    document.querySelector('.email-input').classList.add('verified'); // Add verified class
+                    document.getElementById('sendOtpBtn').style.display = 'none'; // Hide verify button
+                }
+            } catch (error) {
+                console.error('Error verifying OTP:', error);
+                alert('An error occurred while verifying OTP.');
+            }
+        }
+
+        document.querySelector('#editUserForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const formData = new FormData(editUserForm);
+            const data = Object.fromEntries(formData.entries());
+
+            try {
+                const response = await fetch('/user/update', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+                const result = await response.json();
+                alert(result.message);
+                if (result.success) {
+                    location.reload(); // Reload to see the updated information
+                }
+            } catch (error) {
+                console.error('Error updating user details:', error);
+                alert('An error occurred while updating details.');
+            }
+        });
+
+        // Close the modal
+        document.querySelector('.close').onclick = function() {
+            document.getElementById('editUserModal').style.display = 'none';
+        }
+        window.onclick = function(event) {
+            if (event.target == document.getElementById('editUserModal')) {
+                document.getElementById('editUserModal').style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>

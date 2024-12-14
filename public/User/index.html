@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Registration, Login, and Upload</title>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif; /* Using Roboto font for better readability */
+            margin: 0;
+            padding: 0;
+            background-color: #eafcff; /* Light blue background */
+            display: flex;
+            flex-direction: column; /* Vertical stacking for navbar and content */
+            align-items: center;
+            min-height: 100vh; /* Full viewport height */
+        }
+
+        header {
+            position: fixed; /* Fixes the navbar at the top */
+            top: 0;
+            width: 100%;
+            background-color: white;
+            padding-left:20px ;
+            color: #1e3d58; /* Medium dark blue color */
+            margin: 10px 10px; /* Adjust padding */
+            display: flex;
+            justify-content: flex-start; /* Ensures project name is aligned to the left */
+            align-items: center; /* Vertically centers content */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+            border-radius: 0; /* No rounded corners for navbar */
+            font-weight: 400; /* Normal font weight */
+            z-index: 1000; /* Ensures it stays on top of other elements */
+        }
+
+        main {
+            margin-top: 80px; /* Adds space below fixed navbar */
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
+
+        .big-div {
+            display: flex;
+            margin-top: 30px;
+            justify-content: space-between;
+            width: 90%; /* Occupies 90% of the viewport width */
+            height: 600px;
+            max-width: 1200px; /* Ensures max width */
+            background-color: #ffffff; /* White background for big div */
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+
+        .left-div {
+            background-color: #d4f8e8; /* Light green */
+            border-radius: 12px;
+            padding: 20px;
+            width: 40%; /* 40% of the big div width */
+            height: auto; /* Auto height based on content */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin: 10px 10px 10px 5px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .left-div h2 {
+            text-align: center;
+            color: #1e3d58;
+            margin-bottom: 10px;
+        }
+        
+        .left-div p {
+            text-align: center;
+            color: #1e3d58;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+        
+        .left-image {
+            width: 80%; /* Adjust the image width as needed */
+            height: auto; /* Keeps the aspect ratio intact */
+            margin: 20px 0;
+        }
+        
+
+        .form-container {
+            width: 55%; /* 55% of the big div width */
+            padding: 20px;
+            background-color: white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+        }
+
+        h2 {
+            color: #1e3d58;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="password"],
+        textarea,
+        input[type="file"] {
+            width: calc(100% - 20px); /* Ensures inputs fit within container */
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            background-color: #1e3d58; /* Dark blue */
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+        }
+
+        button:hover {
+            background-color: #15658c; /* Slightly darker on hover */
+        }
+
+        .radio-buttons {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .radio-buttons label {
+            margin-right: 20px;
+            cursor: pointer;
+        }
+
+        .upload-section {
+            display: none;
+            text-align: center;
+        }
+
+        .upload-section input[type="file"] {
+            padding: 5px;
+        }
+
+        .upload-section button {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h2>TrackMate</h2>
+    </header>
+
+    <main>
+        <!-- Big Div -->
+        <div class="big-div">
+            <!-- Left Div -->
+            <div class="left-div">
+                <h2>Welcome!</h2>
+                <img src="/public/User/Wel.png" alt="Project Image" class="left-image">
+                <p>Securely upload and manage your evidence files.</p>
+            </div>
+            
+
+            <!-- Form Container -->
+            <div id="loginForm" class="form-container">
+                <div class="radio-buttons">
+                    <label>
+                        <input type="radio" name="formSwitch" value="login" checked> Login
+                    </label>
+                    <label>
+                        <input type="radio" name="formSwitch" value="register"> Register
+                    </label>
+                </div>
+
+                <h2>User Login</h2>
+                <form id="loginFormElement">
+                    <label for="loginEmail">Email:</label>
+                    <input type="email" id="loginEmail" name="email" required>
+
+                    <label for="loginPassword">Password:</label>
+                    <input type="password" id="loginPassword" name="password" required>
+
+                    <button type="submit">Login</button>
+                </form>
+            </div>
+
+            <!-- Register Form -->
+            <div id="registerForm" class="form-container" style="display: none;">
+                <div class="radio-buttons">
+                    <label>
+                        <input type="radio" name="formSwitch" value="login"> Login
+                    </label>
+                    <label>
+                        <input type="radio" name="formSwitch" value="register" checked> Register
+                    </label>
+                </div>
+
+                <h2>User Registration</h2>
+                <form id="registerFormElement">
+                    <label for="name">Name:</label>
+                    <input type="text" id="name" name="name" required>
+
+                    <label for="phone_no">Phone Number:</label>
+                    <input type="text" id="phone_no" name="phone_no" maxlength="15">
+
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email" required>
+
+                    <label for="address">Address:</label>
+                    <textarea id="address" name="address" required></textarea>
+
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" name="password" required>
+
+                    <button type="submit">Register</button>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <!-- Upload Files Section -->
+    <div class="upload-section" id="uploadForm">
+        <h2>Upload Evidence</h2>
+        <form id="uploadFormElement">
+            <input type="hidden" id="userFolder" name="userFolder">
+            <label for="file">Choose file to upload:</label>
+            <input type="file" id="file" name="file" required>
+            <button type="submit">Upload</button>
+        </form>
+    </div>
+
+    <script>
+        // JavaScript logic remains unchanged
+
+        const registerForm = document.getElementById('registerForm');
+        const loginForm = document.getElementById('loginForm');
+        const uploadForm = document.getElementById('uploadForm');
+
+        const registerFormElement = document.getElementById('registerFormElement');
+        registerFormElement.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(registerFormElement);
+            const data = Object.fromEntries(formData.entries());
+
+            const response = await fetch('/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+
+            const result = await response.json();
+            if (result.success) {
+                window.location.href = '/User/home.html';
+            } else {
+                alert(result.message);
+            }
+        });
+
+        const loginFormElement = document.getElementById('loginFormElement');
+        loginFormElement.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(loginFormElement);
+            const data = Object.fromEntries(formData.entries());
+
+            const response = await fetch('/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+
+            const result = await response.json();
+            if (result.success) {
+                uploadForm.style.display = 'none';
+                window.location.href = '/User/home.html';
+            } else {
+                alert(result.message);
+            }
+        });
+
+        const uploadFormElement = document.getElementById('uploadFormElement');
+        uploadFormElement.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(uploadFormElement);
+
+            const response = await fetch('/upload', {
+                method: 'POST',
+                body: formData,
+            });
+
+            const result = await response.text();
+            alert(result);
+        });
+
+        document.querySelectorAll('input[name="formSwitch"]').forEach(input => {
+            input.addEventListener('change', function () {
+                if (this.value === 'register') {
+                    loginForm.style.display = 'none';
+                    registerForm.style.display = 'block';
+                } else {
+                    registerForm.style.display = 'none';
+                    loginForm.style.display = 'block';
+                }
+            });
+        });
+
+        loginForm.style.display = 'block';
+    </script>
+
+</body>
+</html>

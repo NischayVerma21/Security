@@ -1,0 +1,55 @@
+database name: security 
+tables: 1.admin
+        2.user
+        3.uploads
+
+the structure of admin is:
+
+mysql> desc admin;
++---------------------+--------------+------+-----+-------------------+-------------------+
+| Field               | Type         | Null | Key | Default           | Extra             |
++---------------------+--------------+------+-----+-------------------+-------------------+
+| id                  | int          | NO   | PRI | NULL              | auto_increment    |
+| police_station_name | varchar(255) | NO   |     | NULL              |                   |
+| station_email       | varchar(255) | NO   |     | NULL              |                   |
+| address             | varchar(255) | NO   |     | NULL              |                   |
+| pincode             | varchar(6)   | NO   |     | NULL              |                   |
+| username            | varchar(255) | NO   | UNI | NULL              |                   |
+| password            | varchar(255) | NO   |     | NULL              |                   |
+| created_at          | timestamp    | YES  |     | CURRENT_TIMESTAMP | DEFAULT_GENERATED |
++---------------------+--------------+------+-----+-------------------+-------------------+
+
+the structure od user is :
++-------------+--------------+------+-----+---------+----------------+
+| Field       | Type         | Null | Key | Default | Extra          |
++-------------+--------------+------+-----+---------+----------------+
+| id          | int          | NO   | PRI | NULL    | auto_increment |
+| name        | varchar(255) | NO   |     | NULL    |                |
+| phone_no    | varchar(15)  | NO   | UNI | NULL    |                |
+| email       | varchar(255) | NO   | UNI | NULL    |                |
+| address     | varchar(255) | NO   |     | NULL    |                |
+| password    | varchar(255) | NO   |     | NULL    |                |
+| folder_path | varchar(255) | YES  |     | NULL    |                |
+| created_at  | datetime     | YES  |     | NULL    |                |
+| validate    | tinyint(1)   | YES  |     | NULL    |                |
++-------------+--------------+------+-----+---------+----------------+
+
+
+the structure of uploads is : 
++---------------+--------------+------+-----+-------------------+-------------------+
+| Field         | Type         | Null | Key | Default           | Extra             |
++---------------+--------------+------+-----+-------------------+-------------------+
+| id            | int          | NO   | PRI | NULL              | auto_increment    |
+| user_id       | int          | NO   |     | NULL              |                   |
+| evidence_type | varchar(100) | NO   |     | NULL              |                   |
+| file_path     | json         | NO   |     | NULL              |                   |
+| upload_date   | timestamp    | YES  |     | CURRENT_TIMESTAMP | DEFAULT_GENERATED |
+| description   | text         | YES  |     | NULL              |                   |
+| location      | varchar(255) | YES  |     | NULL              |                   |
+| verified      | tinyint(1)   | YES  |     | 0                 |                   |
++---------------+--------------+------+-----+-------------------+-------------------+
+
+
+
+
+

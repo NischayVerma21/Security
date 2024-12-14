@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Information</title>
+    <style>
+        /* General Styles */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f9;
+        }
+        h1, h2, h3 {
+            text-align: center;
+            color: #333;
+        }
+        h1 {
+            margin-bottom: 20px;
+        }
+
+        /* Container for search bar and buttons */
+        .search-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #fff;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        input {
+            width: 60%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        button {
+            padding: 10px 15px;
+            font-size: 16px;
+            border: none;
+            border-radius: 4px;
+            background-color: #007bff;
+            color: #fff;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .button-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        /* User list container */
+        .user-list-container {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            margin-bottom: 10px;
+            font-size: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        li button {
+            font-size: 14px;
+            padding: 5px 10px;
+            background-color: #28a745;
+        }
+        li button:hover {
+            background-color: #218838;
+        }
+
+        /* User Details Table */
+        #userDetails {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-top: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        table th, table td {
+            padding: 12px 15px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+        table th {
+            background-color: #f4f4f9;
+            color: #333;
+            font-weight: bold;
+        }
+        table td {
+            background-color: #fff;
+        }
+        ul li {
+            background-color: #f9f9f9;
+            padding: 5px 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-bottom: 5px;
+        }
+
+        /* Back link */
+        a {
+            display: block;
+            margin-top: 20px;
+            text-align: center;
+            color: #007bff;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <h1>User Information Page</h1>
+
+    <!-- Search and Filter Section -->
+    <div class="search-container">
+        <input type="text" id="searchInput" placeholder="Search user by name..." oninput="filterUsers()">
+        <div class="button-group">
+            <button onclick="fetchVerifiedUsers()">Verified Users</button>
+            <button onclick="fetchNonVerifiedUsers()">Non-Verified Users</button>
+        </div>
+    </div>
+
+    <!-- User List Section -->
+    <div class="user-list-container">
+        <h2>List of Users</h2>
+        <ul id="userList"></ul>
+    </div>
+
+    <!-- User Details Section -->
+    <div id="userDetails"></div>
+
+    <a href="dashboard.html">Back to Admin Dashboard</a>
+
+    <script>
+        let allUsers = [];
+
+        // Fetch verified users
+        async function fetchVerifiedUsers() {
+            try {
+                const response = await fetch('/admin/users/verified');
+                if (!response.ok) throw new Error(await response.text());
+                allUsers = await response.json();
+                displayUsers(allUsers);
+            } catch (error) {
+                alert('Error fetching verified users: ' + error.message);
+            }
+        }
+
+        // Fetch non-verified users
+        async function fetchNonVerifiedUsers() {
+            try {
+                const response = await fetch('/admin/users/non-verified');
+                if (!response.ok) throw new Error(await response.text());
+                allUsers = await response.json();
+                displayUsers(allUsers);
+            } catch (error) {
+                alert('Error fetching non-verified users: ' + error.message);
+            }
+        }
+
+        // Display users in the list
+        function displayUsers(users) {
+            const userList = document.getElementById('userList');
+            userList.innerHTML = '';
+            users.forEach(user => {
+                const li = document.createElement('li');
+                li.innerHTML = `${user.name} <button onclick="fetchUserDetails(${user.id})">View Details</button>`;
+                userList.appendChild(li);
+            });
+        }
+
+        // Filter users by name
+        function filterUsers() {
+            const searchValue = document.getElementById('searchInput').value.toLowerCase();
+            const filteredUsers = allUsers.filter(user => user.name.toLowerCase().includes(searchValue));
+            displayUsers(filteredUsers);
+        }
+
+        // Fetch and display user details
+        async function fetchUserDetails(userId) {
+            try {
+                const response = await fetch(`/admin/user/${userId}`);
+                if (!response.ok) throw new Error(await response.text());
+                const { userDetails, folderPath, subfolders } = await response.json();
+
+                const userDetailsDiv = document.getElementById('userDetails');
+                userDetailsDiv.innerHTML = `
+                    <h3>User Details</h3>
+                    <table>
+                        <tr><th>Name</th><td>${userDetails.name}</td></tr>
+                        <tr><th>Email</th><td>${userDetails.email}</td></tr>
+                        <tr><th>Phone</th><td>${userDetails.phone_no}</td></tr>
+                        <tr><th>Address</th><td>${userDetails.address}</td></tr>
+                        <tr><th>Created At</th><td>${userDetails.created_at}</td></tr>
+                        <tr><th>Folder Path</th><td>${folderPath}</td></tr>
+                    </table>
+                    <h4>Subfolders</h4>
+                    <ul>
+                        ${subfolders.map(folder => `<li>${folder}</li>`).join('')}
+                    </ul>
+                `;
+            } catch (error) {
+                alert('Error fetching user details: ' + error.message);
+            }
+        }
+    </script>
+</body>
+</html>

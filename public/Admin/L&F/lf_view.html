@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lost and Found Items</title>
+    <style>
+        /* General body styling */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f7fc;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        h1 {
+            color: #333;
+            font-size: 2.5rem;
+            margin-top: 40px;
+            text-align: center;
+        }
+
+        /* Container for the item cards */
+        #container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
+            padding: 20px;
+            max-width: 1200px;
+            width: 100%;
+        }
+
+        /* Card Styling */
+        .card {
+            background-color: #ffffff;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            text-align: center;
+            padding: 20px;
+            position: relative;
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Media gallery section */
+        .media-gallery {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .media-gallery img, .media-gallery video {
+            max-width: 100%;
+            max-height: 200px;
+            border-radius: 8px;
+            margin: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            display: none;
+        }
+
+        .media-gallery img.active, .media-gallery video.active {
+            display: block;
+        }
+
+        /* Headings */
+        .heading {
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 8px;
+            text-transform: capitalize;
+        }
+
+        /* Text details */
+        .details {
+            font-size: 1rem;
+            color: #7f8c8d;
+            margin: 6px 0;
+            line-height: 1.6;
+        }
+
+        /* Button Styling */
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 12px 20px;
+            cursor: pointer;
+            font-size: 1rem;
+            margin-top: 10px;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        /* User section styling */
+        .user-section {
+            background-color: #f9f9f9;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        /* User section details */
+        .user-section .heading {
+            color: #34495e;
+            font-size: 1.1rem;
+        }
+
+        .user-section .details {
+            color: #2c3e50;
+        }
+
+        /* Search bar */
+        #search-bar {
+            padding: 10px;
+            margin: 20px;
+            width: 250px;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+        #view-lost-item {
+            display: none;
+            position: fixed; /* Modal will appear on top of the content */
+            top: 50%; /* Center vertically */
+            left: 50%; /* Center horizontally */
+            transform: translate(-50%, -50%);
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            width: 50%; /* Adjust as per your need */
+            max-width: 600px; /* Ensure it's not too wide on larger screens */
+            z-index: 1000; /* Keep it above other content */
+        }
+        
+        #view-lost-item img, #view-lost-item video {
+            max-width: 100%;
+            max-height: 400px;
+            margin: 10px auto;
+            border-radius: 8px;
+        }
+        
+        #close-view {
+            margin-top: 10px;
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        #close-view:hover {
+            background-color: #c0392b;
+        }
+        
+        /* Dark background overlay */
+        #modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5); /* Transparent dark background */
+            z-index: 999; /* Just below the modal */
+        }
+        
+        /* Style for the "View Lost Item" button */
+        .view-lost-item-btn {
+             /* Primary color */
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 14px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        
+            
+        }
+
+.view-lost-item-btn:hover {
+    background-color: #2980b9; /* Darker shade on hover */
+}
+
+.view-lost-item-btn:focus {
+    outline: none;
+    box-shadow: 0 0 5px #2980b9; /* Focus shadow */
+}
+button{
+    margin: 10px;
+}
+
+
+        
+
+    </style>
+</head>
+<body>
+
+    <h1>Lost and Found Items</h1>
+    <!-- Investigated and Uninvestigated Buttons -->
+    <div>
+        <button onclick="fetchInvestigatedItems()">Investigated</button>
+        <button onclick="fetchUninvestigatedItems()">Uninvestigated</button>
+    </div>
+
+    <!-- Search Bar for l_id -->
+    <input type="text" id="search-bar" placeholder="Search by l_id..." oninput="searchById()">
+
+    <div id="container"></div> <!-- Container to display item cards -->
+    <!-- New Section for Viewing Lost Items -->
+    <div id="modal-overlay" onclick="closeLostItemView()"></div>
+<div id="view-lost-item">
+    <button id="close-view" onclick="closeLostItemView()">Close</button>
+    <div id="media-container"></div>
+</div>
+
+
+    <script>
+    let allItems = []; // Store all items fetched from the server
+
+    function convertMediaToBase64(filePath) {
+        return fetch(filePath)
+            .then(response => response.blob())
+            .then(blob => new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onloadend = () => resolve(reader.result);
+                reader.onerror = reject;
+                reader.readAsDataURL(blob);
+            }));
+    }
+
+    function displaySingleMediaCard(item) {
+        const container = document.querySelector('#container');
+        const card = document.createElement('div');
+        card.classList.add('card');
+
+        const mediaGallery = document.createElement('div');
+        mediaGallery.classList.add('media-gallery');
+
+        const mediaElement = document.createElement(item.media[0].endsWith('.mp4') ? 'video' : 'img');
+        mediaElement.src = item.media[0];
+        mediaElement.controls = item.media[0].endsWith('.mp4');
+        mediaElement.classList.add('active'); // Always show single media
+        mediaGallery.appendChild(mediaElement);
+
+        appendItemDetails(card, mediaGallery, item);
+
+        container.appendChild(card);
+    }
+
+    function displayMultipleMediaCard(item) {
+        const container = document.querySelector('#container');
+        const card = document.createElement('div');
+        card.classList.add('card');
+
+        const mediaGallery = document.createElement('div');
+        mediaGallery.classList.add('media-gallery');
+
+        item.media.forEach((mediaPath, index) => {
+            const mediaElement = document.createElement(mediaPath.endsWith('.mp4') ? 'video' : 'img');
+            mediaElement.src = mediaPath;
+            mediaElement.controls = mediaPath.endsWith('.mp4');
+            if (index === 0) {
+                mediaElement.classList.add('active');
+            }
+            mediaGallery.appendChild(mediaElement);
+        });
+
+        let currentIndex = 0;
+        const mediaElements = mediaGallery.querySelectorAll('img, video');
+        setInterval(() => {
+            mediaElements[currentIndex].classList.remove('active');
+            currentIndex = (currentIndex + 1) % mediaElements.length;
+            mediaElements[currentIndex].classList.add('active');
+        }, 5000);
+
+        appendItemDetails(card, mediaGallery, item);
+
+        container.appendChild(card);
+    }
+
+    function appendItemDetails(card, mediaGallery, item) {
+        
+        const itemName = document.createElement('div');
+        itemName.classList.add('heading');
+        itemName.textContent = `Item: ${item.item_name}`;
+        const viewLostItemButton = document.createElement('button');
+    viewLostItemButton.textContent = 'View Lost Item';
+    viewLostItemButton.className = 'view-lost-item-btn'; // Apply CSS class for styling
+    viewLostItemButton.onclick = () => handleViewLostItem(item.l_id);
+
+    
+        const lostDate = document.createElement('div');
+        lostDate.classList.add('details');
+        lostDate.textContent = `Lost Date: ${item.lost_date}`;
+
+        const itemDescription = document.createElement('div');
+        itemDescription.classList.add('details');
+        itemDescription.textContent = `Description: ${item.description}`;
+
+        const lId = document.createElement('div');
+        lId.classList.add('details');
+        lId.textContent = `Item ID: ${item.l_id}`; // Displaying l_id
+
+        const userSection = document.createElement('div');
+        userSection.classList.add('user-section');
+
+        const userHeading = document.createElement('div');
+        userHeading.classList.add('heading');
+        userHeading.textContent = 'User Who Found:';
+
+        const userName = document.createElement('div');
+        userName.classList.add('details');
+        userName.textContent = `Name: ${item.user.name}`;
+
+        const userPhone = document.createElement('div');
+        userPhone.classList.add('details');
+        userPhone.textContent = `Phone: ${item.user.phone_no}`;
+
+        const userEmail = document.createElement('div');
+        userEmail.classList.add('details');
+        userEmail.textContent = `Email: ${item.user.email}`;
+
+        const userDescription = document.createElement('div');
+        userDescription.classList.add('details');
+        userDescription.textContent = `Description: ${item.user.description}`;
+
+        userSection.appendChild(userHeading);
+        userSection.appendChild(userName);
+        userSection.appendChild(userPhone);
+        userSection.appendChild(userEmail);
+        userSection.appendChild(userDescription);
+
+        card.appendChild(mediaGallery);
+        card.appendChild(itemName);
+        card.appendChild(lostDate);
+        card.appendChild(itemDescription);
+        card.appendChild(lId); 
+        card.appendChild(userSection);
+        card.appendChild(viewLostItemButton);
+
+
+        // Button logic based on item status
+        if (item.status === 'investigated') {
+            const reuploadButton = document.createElement('button');
+            reuploadButton.textContent = 'Re-upload';
+            reuploadButton.onclick = () => handleReupload(item.l_id);
+
+            const resolvedButton = document.createElement('button');
+            resolvedButton.textContent = 'Resolved';
+            resolvedButton.onclick = () => handleResolved(item.l_id);
+
+            card.appendChild(reuploadButton);
+            card.appendChild(resolvedButton);
+        } else {
+            const foundedButton = document.createElement('button');
+            foundedButton.textContent = 'Mark as Founded';
+            foundedButton.onclick = () => handleMarkAsFounded(item.l_id, mediaGallery.querySelectorAll('img, video'), item.user.name, item.user.email);
+
+            card.appendChild(foundedButton);
+        }
+    }
+
+    function searchById() {
+        const searchValue = document.getElementById('search-bar').value.trim().toLowerCase();  
+        const filteredItems = allItems.filter(item => item.l_id.toString().toLowerCase().includes(searchValue)); 
+        displayItems(filteredItems);
+    }
+
+    function displayItems(items) {
+        const container = document.querySelector('#container');
+        container.innerHTML = ''; 
+        items.forEach(item => {
+            if (item.media.length === 1) {
+                displaySingleMediaCard(item);
+            } else if (item.media.length > 1) {
+                displayMultipleMediaCard(item);
+            }
+        });
+    }
+
+    function fetchInvestigatedItems() {
+        fetch('/get_lost_found?status=investigated')
+            .then(response => response.json())
+            .then(data => {
+                allItems = data.map(item => ({ ...item, status: 'investigated' }));
+                displayItems(allItems);
+            })
+            .catch(error => console.error("Error fetching investigated items:", error));
+    }
+
+    function fetchUninvestigatedItems() {
+        fetch('/get_lost_found?status=uninvestigated')
+            .then(response => response.json())
+            .then(data => {
+                allItems = data.map(item => ({ ...item, status: 'uninvestigated' }));
+                displayItems(allItems);
+            })
+            .catch(error => console.error("Error fetching uninvestigated items:", error));
+    }
+
+    fetchUninvestigatedItems();
+
+    async function handleMarkAsFounded(itemId, mediaElements, name, email) {
+        const mediaBase64 = await Promise.all([...mediaElements].map(mediaElement => convertMediaToBase64(mediaElement.src)));
+
+        fetch('/mark_as_founded', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                l_id: itemId,
+                media: mediaBase64,
+                founder_name: name,
+                founder_email: email
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Item marked and User Informed Successfully.');
+                window.location.reload();
+            } else {
+                alert('Failed to update informed status.');
+            }
+        })
+        .catch(error => console.error("Error updating informed status:", error));
+    }
+
+    function handleReupload(itemId) {
+        fetch('/reupload_item', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ l_id: itemId })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Item re-uploaded successfully.');
+                window.location.reload();
+            } else {
+                alert('Failed to re-upload the item.');
+            }
+        })
+        .catch(error => console.error("Error re-uploading item:", error));
+    }
+
+    function handleResolved(itemId) {
+        fetch('/resolve_item', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ l_id: itemId })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Item marked as resolved.');
+                window.location.reload();
+            } else {
+                alert('Failed to mark item as resolved.');
+            }
+        })
+        .catch(error => console.error("Error resolving item:", error));
+    }
+
+
+
+    async function handleViewLostItem(l_id) {
+        try {
+            const response = await fetch(`/view_lost_item`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ l_id: l_id })
+            });
+            const data = await response.json();
+    
+            if (data.success) {
+                displayLostItemMedia(data.mediaPaths);
+            } else {
+                alert('Failed to fetch lost item media.');
+            }
+        } catch (error) {
+            console.error("Error fetching lost item media:", error);
+        }
+    }
+    
+    function displayLostItemMedia(mediaPaths) {
+        const mediaContainer = document.getElementById('media-container');
+        mediaContainer.innerHTML = ''; 
+    
+        mediaPaths.forEach(path => {
+            const mediaElement = document.createElement(path.endsWith('.mp4') ? 'video' : 'img');
+            mediaElement.src = path;
+            mediaElement.style.maxHeight = '400px'; // Ensure it doesn't overflow
+            if (path.endsWith('.mp4')) {
+                mediaElement.controls = true;
+            }
+            mediaContainer.appendChild(mediaElement);
+        });
+    
+        document.getElementById('modal-overlay').style.display = 'block'; // Show overlay
+        document.getElementById('view-lost-item').style.display = 'block'; // Show modal
+    }
+    
+    function closeLostItemView() {
+        document.getElementById('view-lost-item').style.display = 'none';
+        document.getElementById('modal-overlay').style.display = 'none'; // Hide overlay
+    }
+</script>
+
+    
+
+</body>
+</html>
